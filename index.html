@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x"
+      crossorigin="anonymous"
+    />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Baloo+Tammudu+2&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+      integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+    <title>LoRa Air-Time Calculator</title>
+  </head>
+  <body>
+    <div class="contain" id="app">
+      <h1>
+        The LoRa Air-Time Calculator<a class="github" href="https://github.com/ifTNT/lora-air-time"
+          >by ifTNT <i class="fab fa-github"></i
+        ></a>
+      </h1>
+      <div class="mb-3">
+        <label for="payload-len" class="form-label">Payload Size</label>
+        <div class="input-group mb-3">
+          <input
+            type="number"
+            class="form-control"
+            placeholder="The size of your payload (1~255 Bytes)"
+            name="payload-len"
+            v-model.number="payload_len"
+            v-on:blur="check_payload_len"
+            v-bind:class="{'is-invalid': !payload_len_valid}"
+          />
+          <span class="input-group-text">Bytes</span>
+        </div>
+        <div class="invalid-feedback">
+          Length of payload must between 1~255 bytes.
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="preamble-len" class="form-label">Preamble Size</label>
+        <div class="input-group mb-3">
+          <input
+            type="number"
+            class="form-control"
+            placeholder="The size of your preamble (6~65535 Symbols)"
+            name="preamble-len"
+            v-model.number="preamble_len"
+            v-on:blur="check_preamble_len"
+            v-bind:class="{'is-invalid': !preamble_len_valid}"
+          />
+          <span class="input-group-text">Symbols</span>
+        </div>
+        <div class="invalid-feedback">
+          Length of preamble must between 6~65535 symbols.
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-auto">
+          <label for="sf" class="form-label">Spreading Factor</label>
+          <select
+            class="form-select"
+            name="sf"
+            v-model.number="spreading_factor"
+          >
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+          </select>
+        </div>
+        <div class="col-auto">
+          <label for="bw" class="form-label">Bandwidth</label>
+          <select class="form-select" name="bw" v-model.number="bandwidth">
+            <option value="7.8">7.8KHz</option>
+            <option value="10.4">10.4KHz</option>
+            <option value="15.6">15.6KHz</option>
+            <option value="20.8">20.8KHz</option>
+            <option value="31.2">31.2KHz</option>
+            <option value="41.7">41.7KHz</option>
+            <option value="62.5">62.5KHz</option>
+            <option value="125">125KHz</option>
+            <option value="250">250KHz</option>
+            <option value="500">500KHz</option>
+          </select>
+        </div>
+        <div class="col-auto">
+          <label for="cr" class="form-label">Coding Rate</label>
+          <select class="form-select" name="cr" v-model.number="coding_rate">
+            <option value="5">4/5</option>
+            <option value="6">4/6</option>
+            <option value="7">4/7</option>
+            <option value="8">4/8</option>
+          </select>
+        </div>
+        <div class="col-auto">
+          <div class="form-check form-switch">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="crc"
+              v-model="crc"
+            />
+            <label class="form-check-label" for="crc">CRC</label>
+          </div>
+          <div class="form-check form-switch">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="ih"
+              v-model="explicit_header"
+            />
+            <label class="form-check-label" for="ih">Explicit Header</label>
+          </div>
+          <div class="form-check form-switch">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="de"
+              v-model="low_data_rate_opt"
+            />
+            <label class="form-check-label" for="de"
+              >Low Data Rate Optimization</label
+            >
+          </div>
+        </div>
+      </div>
+      <h2>Result</h2>
+      <table class="table table-hover align-middle">
+        <thead>
+          <tr>
+            <th scope="col" class="text-nowrap">Property</th>
+            <th scope="col" class="text-nowrap th-sm">Value</th>
+            <th scope="col" class="text-nowrap">Unit</th>
+            <th scope="col">Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="text-nowrap">Symbol Time</td>
+            <td class="text-nowrap">{{symbol_time}}</td>
+            <td class="text-nowrap">Millisecond (ms)</td>
+            <td>How much time dose it take to transmit a symbol.</td>
+          </tr>
+          <tr>
+            <td class="text-nowrap">Symbol Rate</td>
+            <td class="text-nowrap">{{symbol_rate}}</td>
+            <td class="text-nowrap">Symbol per second</td>
+            <td>How much symbol can be transmited in one second.</td>
+          </tr>
+
+          <tr>
+            <td class="text-nowrap">#Preamble</td>
+            <td class="text-nowrap">{{n_preamble}}</td>
+            <td class="text-nowrap">Symbols</td>
+            <td>How much symbols does the preamble take place.</td>
+          </tr>
+          <tr>
+            <td class="text-nowrap">Preamble Time</td>
+            <td class="text-nowrap">{{t_preamble}}</td>
+            <td class="text-nowrap">Millisecond (ms)</td>
+            <td>How much air-time does the preamble take.</td>
+          </tr>
+          <tr>
+            <td class="text-nowrap">#Payload</td>
+            <td class="text-nowrap">{{n_payload}}</td>
+            <td class="text-nowrap">Symbols</td>
+            <td>How much symbols does the ramain part in packet take place.</td>
+          </tr>
+          <tr>
+            <td class="text-nowrap">Payload Time</td>
+            <td class="text-nowrap">{{t_payload}}</td>
+            <td class="text-nowrap">Millisecond (ms)</td>
+            <td>How much air-time does the payload take.</td>
+          </tr>
+          <tr>
+            <td class="text-nowrap">Air-Time</td>
+            <td class="text-nowrap">{{t_total}}</td>
+            <td class="text-nowrap">Millisecond (ms)</td>
+            <td>How much air-time does the whole packet take.</td>
+          </tr>
+          <tr>
+            <td class="text-nowrap">Throughput</td>
+            <td class="text-nowrap">{{throughput}}</td>
+            <td class="text-nowrap">Bits per second (bps)</td>
+            <td>
+              How much data can you transmit through LoRa with above
+              configuration.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </body>
+  <script src="calculator.js"></script>
+</html>

@@ -1,0 +1,23 @@
+h1 {
+  text-align: center;
+  margin-bottom: 1em;
+  font-family: "Baloo Tammudu 2", sans-serif;
+}
+h1 a.github {
+  font-size: 1.1rem;
+  margin-left: 1em;
+  color: darkgray;
+  text-decoration: none;
+}
+h1 a.github:hover {
+  color: black;
+  cursor: pointer;
+}
+.contain {
+  max-width: 800px;
+  margin: 3em auto;
+  background-color: #fafafa;
+  padding: 2em;
+  box-sizing: border-box;
+  border-radius: 0.5em;
+}
