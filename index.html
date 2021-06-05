@@ -28,7 +28,9 @@
   <body>
     <div class="contain" id="app">
       <h1>
-        The LoRa Air-Time Calculator<a class="github" href="https://github.com/ifTNT/lora-air-time"
+        The LoRa Air-Time Calculator<a
+          class="github"
+          href="https://github.com/ifTNT/lora-air-time"
           >by ifTNT <i class="fab fa-github"></i
         ></a>
       </h1>
@@ -45,9 +47,9 @@
             v-bind:class="{'is-invalid': !payload_len_valid}"
           />
           <span class="input-group-text">Bytes</span>
-        </div>
-        <div class="invalid-feedback">
-          Length of payload must between 1~255 bytes.
+          <div class="invalid-feedback">
+            Length of payload must between 1~255 bytes.
+          </div>
         </div>
       </div>
       <div class="mb-3">
@@ -63,9 +65,9 @@
             v-bind:class="{'is-invalid': !preamble_len_valid}"
           />
           <span class="input-group-text">Symbols</span>
-        </div>
-        <div class="invalid-feedback">
-          Length of preamble must between 6~65535 symbols.
+          <div class="invalid-feedback">
+            Length of preamble must between 6~65535 symbols.
+          </div>
         </div>
       </div>
       <div class="row mb-3">
