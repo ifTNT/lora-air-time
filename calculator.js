@@ -59,15 +59,15 @@ var app = new Vue({
       if (this.payload_len !== null) {
         let payload_bit = 8 * this.payload_len; // The lenght of payload in bits
         payload_bit -= 4 * this.spreading_factor; // ???
-        payload_bit += 28; // Mistry magic number
-        payload_bit += 16 * (0 + this.crc); // The length of CRC is 16 bits
-        payload_bit += 20 * (0 + this.explicit_header); // The length of LoRa header is 20 bits
-        let payload_coded = (payload_bit * this.coding_rate) / 4; // Perform forward error correction coding on original payload
-        let payload_symbol = Math.ceil(
-          payload_coded /
-            (this.spreading_factor - 2 * (0 + this.low_data_rate_opt))
-        ); // Mapping bits to symbol
-        payload_symbol = Math.max(payload_symbol, 0); // Minimum possible symbol is 0
+        payload_bit += 8; // Mistry magic overhead
+        payload_bit += this.crc ? 16 : 0; // The length of CRC is 16 bits
+        payload_bit += this.explicit_header ? 20 : 0; // The length of LoRa header is 20 bits
+        payload_bit = Math.max(payload_bit, 0);
+        let bits_per_symbol = this.low_data_rate_opt
+          ? this.spreading_factor - 2
+          : this.spreading_factor; // If low data rate optimization is enabled, onlt SF-2 bits will be mapped to each symbol
+        let payload_symbol =
+          Math.ceil(payload_bit / 4 / bits_per_symbol) * this.coding_rate; // Perform coding and mapping bits to symbol
         payload_symbol += 8; // There's always a 8-symbol-long overhead. Probably is SyncWord.
 
         return payload_symbol;
