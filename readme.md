@@ -23,7 +23,7 @@ This equation have so many magic number that is not specified in the datasheet. 
 ## Validation of Correctness
 
 I was wondering whether the air-time had been given in the datasheet is correct. So I performed the following experiment to validate the correctness of this calculator.  
-I use USRP-B210 software-defined-radio and (gqrx)[https://gqrx.dk/] to capture the raw I/Q data of LoRa signal at 920MHz unlicensed band. Then analysis it with [inspectrum](https://github.com/miek/inspectrum). The overall result provide an excellent prove to the correctness of calculator which is a good news for me. The detailed result is shown as below.
+I use USRP-B210 software-defined-radio and [gqrx](https://gqrx.dk/) to capture the raw I/Q data of LoRa signal transmitted by SX1276 at 920MHz unlicensed band. Then analysis it with [inspectrum](https://github.com/miek/inspectrum). The overall result provide an excellent prove to the correctness of calculator which is a good news for me. The detailed result is shown as below.
 
 ### Bandwidth=125KHz, Spreading Factor=7
 
