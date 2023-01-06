@@ -59,7 +59,7 @@ var app = new Vue({
       if (this.payload_len !== null) {
         let payload_bit = 8 * this.payload_len; // The lenght of payload in bits
         payload_bit -= 4 * this.spreading_factor; // ???
-        payload_bit += 28; // Mistry magic overhead
+        payload_bit += 8; // Mistry magic overhead
         payload_bit += this.crc ? 16 : 0; // The length of CRC is 16 bits
         payload_bit += this.explicit_header ? 20 : 0; // The length of LoRa header is 20 bits
         payload_bit = Math.max(payload_bit, 0);
